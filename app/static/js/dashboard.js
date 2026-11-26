@@ -194,7 +194,13 @@ async function fetchStats() {
         }
         
         const data = await response.json();
-        
+        if (data.error) {
+            updateConnectionStatus(false);
+            const text = document.getElementById('statusText');
+            if (text) text.textContent = data.error;
+            return;
+        }
+
         updateConnectionStatus(true);
         updateCPU(data.cpu);
         updateMemory(data.memory);

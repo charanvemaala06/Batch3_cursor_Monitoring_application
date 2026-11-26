@@ -1,7 +1,17 @@
 .venv/
+venv/
 __pycache__/
 *.pyc
+*.pyo
 flask_session/
 .env
 .DS_Store
 app/servers.json
+servers.json
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/

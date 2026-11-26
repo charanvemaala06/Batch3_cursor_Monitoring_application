@@ -1,6 +1,18 @@
 import re
-import time
+
 import paramiko
+
+
+def sanitize_remote_error(exc: Exception) -> str:
+    """Return a UI-safe error string without leaking credentials or stack traces."""
+    if isinstance(exc, paramiko.AuthenticationException):
+        return 'Authentication failed'
+    if isinstance(exc, paramiko.SSHException):
+        return 'SSH connection failed'
+    text = str(exc) or exc.__class__.__name__
+    # Drop anything that looks like a password-bearing URI fragment.
+    text = re.sub(r'(?i)(password|passwd|pwd)\s*[:=]\s*\S+', r'\1=***', text)
+    return text[:200]
 
 
 class RemoteMonitor:
@@ -308,10 +320,22 @@ class RemoteMonitor:
     
     def _memory_windows(self, output):
         parts = output.split()
-        percent = 0
-        total = 0
-        used = 0
-        return {'percent': percent, 'total': total, 'used': used, 'available': 0}
+        try:
+            # PowerShell returns KB for TotalVisibleMemorySize / FreePhysicalMemory.
+            total_kb = int(parts[0]) if len(parts) > 0 else 0
+            free_kb = int(parts[1]) if len(parts) > 1 else 0
+        except ValueError:
+            total_kb, free_kb = 0, 0
+        total = total_kb * 1024
+        available = free_kb * 1024
+        used = max(total - available, 0)
+        percent = (used / total * 100) if total else 0
+        return {
+            'percent': round(percent, 1),
+            'total': total,
+            'used': used,
+            'available': available,
+        }
     
     def _processes_windows(self, output):
         processes = []

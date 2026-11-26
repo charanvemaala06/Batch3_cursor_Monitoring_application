@@ -1,25 +1,7 @@
-"""Support for other operating systems can be added here in the future.
-
-Example:
-- Linux:    from .linux_monitor import LinuxMonitor
-- Windows:  from .windows_monitor import WindowsMonitor
-"""
-
+"""Monitor factory — one local implementation covers Linux/macOS demo hosts."""
 from .base_monitor import BaseMonitor
-from .macos_monitor import MacOSMonitor
-import platform
+from .local_monitor import LocalMonitor
 
 
-def get_monitor():
-    system = platform.system()
-    
-    if system == 'Darwin':
-        return MacOSMonitor()
-    elif system == 'Linux':
-        # return LinuxMonitor()
-        return MacOSMonitor()
-    elif system == 'Windows':
-        # return WindowsMonitor()
-        return MacOSMonitor()
-    else:
-        return MacOSMonitor()
+def get_monitor() -> BaseMonitor:
+    return LocalMonitor()

@@ -40,10 +40,10 @@
         <div class="page-header monitor-header">
             <div class="monitor-title">
                 <h1>
-                    <i class="fab {{ 'fa-apple' if system_type == 'mac' else ('fa-linux' if system_type == 'linux' else 'fa-windows') }}"></i>
+                    <i class="{{ 'fas fa-desktop' if system_type == 'local' else ('fab fa-linux' if system_type == 'linux' else 'fab fa-windows') }}"></i>
                     {{ host }}
                 </h1>
-                <p>{{ system_type|capitalize }} System Monitoring</p>
+                <p>{{ system_type|capitalize }} system monitoring</p>
             </div>
         </div>
 
@@ -146,11 +146,12 @@
                                 <th>Name</th>
                                 <th>CPU %</th>
                                 <th>Memory %</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="processTable">
                             <tr>
-                                <td colspan="4" class="loading">Loading processes...</td>
+                                <td colspan="5" class="loading">Loading processes...</td>
                             </tr>
                         </tbody>
                     </table>
